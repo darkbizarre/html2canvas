@@ -23,7 +23,19 @@ function cloneNode(node, javascriptEnabled) {
 
     var child = node.firstChild;
     while(child) {
-        if (javascriptEnabled === true || child.nodeType !== 1 || child.nodeName !== 'SCRIPT') {
+        if (child.nodeName === 'VIDEO') {
+            var image = new Image();
+            var canvas = document.createElement('canvas');
+            var context = canvas.getContext('2d');
+            canvas.width = child.clientWidth;
+            canvas.height = child.clientHeight;
+            context.drawImage(child, 0, 0, canvas.width, canvas.height);
+            image.setAttribute('src', canvas.toDataURL('image/png'));
+            image.setAttribute('width', child.videoWidth * child.clientHeight / child.videoHeight);
+            image.setAttribute('height', child.clientHeight);
+            image.style.marginLeft = (child.clientWidth - child.videoWidth * child.clientHeight / child.videoHeight) / 2 + 'px';
+            clone.appendChild(image);
+        } else if (javascriptEnabled === true || child.nodeType !== 1 || child.nodeName !== 'SCRIPT') {
             clone.appendChild(cloneNode(child, javascriptEnabled));
         }
         child = child.nextSibling;
