@@ -32,9 +32,20 @@ function cloneNode(node, javascriptEnabled) {
                 canvas.height = child.clientHeight;
                 context.drawImage(child, 0, 0, canvas.width, canvas.height);
                 image.setAttribute('src', canvas.toDataURL('image/png'));
-                image.setAttribute('width', child.videoWidth * child.clientHeight / child.videoHeight);
-                image.setAttribute('height', child.clientHeight);
-                image.style.marginLeft = (child.clientWidth - child.videoWidth * child.clientHeight / child.videoHeight) / 2 + 'px';
+                
+                const containerRatio = child.clientWidth / child.clientHeight;
+                const videoRatio = child.videoWidth / child.videoHeight;
+                if (containerRatio >= videoRatio) {
+                    const width = child.clientHeight * videoRatio;
+                    image.setAttribute('width', width);
+                    image.setAttribute('height', child.clientHeight);
+                    image.style.marginLeft = (child.clientWidth - width) / 2 + 'px';
+                } else {
+                    const height = child.clientWidth / videoRatio;
+                    image.setAttribute('width', child.clientWidth);
+                    image.setAttribute('height', height);
+                    image.style.marginTop = (child.clientHeight - height) / 2 + 'px';
+                }
                 clone.appendChild(image);
             } catch (e) {
                 if (e.name == "NS_ERROR_NOT_AVAILABLE") {
